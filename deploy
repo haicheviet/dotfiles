@@ -6,7 +6,7 @@ prompt_install() {
 	stty $old_stty_cfg && echo
 	if echo "$answer" | grep -iq "^y" ;then
 		# This could def use community support
-		if [$1 == "nvim"]; then
+		if [[ "$1" == "nvim" ]]; then
 			neovim_install
 
 		elif [ -x "$(command -v apt-get)" ]; then
