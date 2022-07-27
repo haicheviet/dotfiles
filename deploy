@@ -28,12 +28,12 @@ prompt_install() {
 }
 
 neovim_install() {
+	sudo apt-get install -y fuse
 	wget --quiet https://github.com/neovim/neovim/releases/download/v0.7.2/nvim.appimage --output-document nvim
 	chmod +x nvim
 	sudo chown root:root nvim
 	sudo mv nvim /usr/bin
-	cd ~
-	mkdir -p .config/nvim
+	mkdir -p ~/.config/nvim
 }
 
 check_for_software() {
@@ -111,6 +111,8 @@ printf "source-file $HOME/dotfiles/tmux/tmux.conf" > ~/.tmux.conf
 
 ln -s $HOME/dotfiles/vim/lua ~/.config/nvim/lua
 ln -s $HOME/dotfiles/vim/init.vim ~/.config/nvim/init.vim
+echo "Process nvim PlugInstall"
+nvim --headless +PlugInstall +qall > /dev/null 2>&1
 
 yes | cp -rf $HOME/dotfiles/gitconfig/. ~/
 
