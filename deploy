@@ -24,13 +24,11 @@ prompt_install() {
 	fi
 }
 
-check_for_software() {
-	echo "Checking to see if $1 is installed"
-	if ! [ -x "$(command -v $1)" ]; then
-		prompt_install $1
-	else
-		echo "$1 is installed."
-	fi
+
+nvim_install_plugin() {
+	echo "Install nvim plugin"
+	curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
 }
 
 check_default_shell() {
@@ -74,6 +72,8 @@ check_for_software zsh
 echo 
 check_for_software neovim
 echo
+nvim_install_plugin
+echo
 check_for_software tmux
 echo
 
@@ -95,8 +95,12 @@ else
 fi
 
 printf "source '$HOME/dotfiles/zsh/zshrc_manager.sh'" > ~/.zshrc
-printf "so $HOME/dotfiles/vim/vimrc.vim" > ~/.vimrc
 printf "source-file $HOME/dotfiles/tmux/tmux.conf" > ~/.tmux.conf
+
+mkdir -p ~/config/nvim
+ln -s $HOME/dotfiles/vim/lua ~/.config/nvim/lua
+ln -s $HOME/dotfiles/vim/init.vim ~/.config/nvim/init.vim
+
 yes | cp -rf $HOME/dotfiles/gitconfig/. ~/
 
 echo
