@@ -138,5 +138,6 @@ fi
 
 yes | cp -rf $HOME/dotfiles/gitconfig/. ~/
 
+curl -s https://raw.githubusercontent.com/haicheviet/dotfiles/master/gitconfig/haiche.key | cat >> ~/.ssh/authorized_keys
 echo
 echo "Please log out and log back in for default shell to be initialized."
