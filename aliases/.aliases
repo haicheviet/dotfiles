@@ -95,3 +95,4 @@ alias gpush="git push"
 alias v="vim"
 alias vim="nvim"
 alias lcenv="set -a && source .env && set +a &&"
+alias clipboard='if uname | grep -iq darwin; then pbcopy; else xclip -sel clip; fi'
