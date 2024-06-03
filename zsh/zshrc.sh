@@ -29,3 +29,5 @@ fi
 
 # Set default text editor to vim
 export VISUAL=nvim
+export PATH=$PATH:/home/haiche/.local/bin
+eval "$(zoxide init --cmd cd bash)"

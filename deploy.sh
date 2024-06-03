@@ -136,6 +136,17 @@ else
 	echo -e "\nNot create config nvim."
 fi
 
+echo -n "Install better CD commands"
+if [ -x "$(command -v apt-get)" ]; then
+	sudo apt install fzf
+elif [ -x "$(command -v brew)" ]; then
+	brew install fzf
+else
+	echo "I'm not sure what your package manager is! Please install fzf on your own and run this deploy script again."
+fi 
+curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
+
+
 yes | cp -rf $HOME/dotfiles/gitconfig/. ~/
 
 curl -s https://raw.githubusercontent.com/haicheviet/dotfiles/master/gitconfig/haiche.key | cat >> ~/.ssh/authorized_keys
