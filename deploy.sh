@@ -31,7 +31,6 @@ neovim_install() {
 	if [ -x "$(command -v apt-get)" ]; then
 		wget --quiet https://github.com/neovim/neovim/releases/download/v0.9.1/nvim.appimage --output-document nvim
 		chmod u+x nvim
-		sudo chown root:root nvim
 		sudo mv nvim /usr/bin
 	elif [ -x "$(command -v brew)" ]; then
 		brew install neovim
