@@ -135,16 +135,24 @@ else
 	echo -e "\nNot create config nvim."
 fi
 
-echo -n "Install better CD commands"
-if [ -x "$(command -v apt-get)" ]; then
-	sudo apt install fzf
-elif [ -x "$(command -v brew)" ]; then
-	brew install fzf
-else
-	echo "I'm not sure what your package manager is! Please install fzf on your own and run this deploy script again."
-fi 
-curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
 
+echo -n "Would you like to use AI to generate commit messages? (y/n) "
+old_stty_cfg=$(stty -g)
+stty raw -echo
+answer=$( while ! head -c 1 | grep -i '[ny]' ;do true ;done )
+stty $old_stty_cfg
+if echo "$answer" | grep -iq "^y" ;then
+	# Prompt for GROQ_API_KEY
+	echo -n "Please enter your GROQ_API_KEY: "
+	read -r GROQ_API_KEY
+	GROQ_API_KEY=$(echo "$GROQ_API_KEY" | sed 's/[[:space:]]*$//')  # Strip trailing spaces
+
+	# Append export command to shell config file
+	if [ -n "$GROQ_API_KEY" ]; then
+		echo "export GROQ_API_KEY='$GROQ_API_KEY'" >> ~/.zshrc
+	else
+		echo "GROQ_API_KEY input was empty. It won't be saved."
+	fi
 
 yes | cp -rf $HOME/dotfiles/gitconfig/. ~/
 
