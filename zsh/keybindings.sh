@@ -65,7 +65,7 @@ function gcm() {
     # Function to generate commit message
     generate_commit_message() {
         # Capture staged changes and escape special characters
-        staged_changes=$(git diff --cached | jq -Rs .)
+        staged_changes=$(git diff --cached | sed 's/[\x00-\x1F\x7F]/\\u&/g' | jq -Rsa '.')
 
         # Construct the JSON payload
         json_payload=$(jq -n \
