@@ -64,24 +64,14 @@ function gcm() {
 
     # Function to generate commit message
     generate_commit_message() {
-        staged_changes=$(git diff --cached | perl -pe 's/([^\w\s,.:-])/sprintf("\\u%04x", ord($1))/ge' | sed 's/$/\\n/' | tr -d '\n')
-
-        # Construct the JSON payload
-        json_payload=$(jq -n \
-        --arg changes "$staged_changes" \
-        '{
-            model: "gemma2-9b-it",
-            messages: [
-                {role: "system", content: "You are a helpful assistant. You will only generate one-line commit message, nothing more."},
-                {role: "user", content: "Below is a diff of all staged changes, coming from the command:\n\($changes)\nPlease generate a concise, one-line commit message for these changes."}
-            ]
-        }')
-        response=$(curl -s -X POST "https://api.groq.com/openai/v1/chat/completions" \
-        -H "Authorization: Bearer $GROQ_API_KEY" \
-        -H "Content-Type: application/json" \
-        -d "$json_payload")
-        commit_message=$(echo "$response" | jq -r '.choices[0].message.content' | sed 's/"//g' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
-        echo "$commit_message"
+        git diff --cached | llm -m groq-gemma2 \
+        --system "You are a helpful assistant. Your task is summarize the the diff change into a concise, one-line commit message." "
+        Below is a diff of all staged changes, coming from the command:
+        \`\`\`
+        git diff --cached
+        \`\`\`
+        Please generate a concise, one-line commit message for these changes."
+        
     }
 
     # Function to read user input compatibly with both Bash and Zsh

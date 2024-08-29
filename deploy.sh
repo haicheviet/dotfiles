@@ -142,17 +142,10 @@ stty raw -echo
 answer=$( while ! head -c 1 | grep -i '[ny]' ;do true ;done )
 stty $old_stty_cfg
 if echo "$answer" | grep -iq "^y" ;then
+	pip install --user llm
 	# Prompt for GROQ_API_KEY
-	echo -n "Please enter your GROQ_API_KEY: "
-	read -r GROQ_API_KEY
-	GROQ_API_KEY=$(echo "$GROQ_API_KEY" | sed 's/[[:space:]]*$//')  # Strip trailing spaces
-
-	# Append export command to shell config file
-	if [ -n "$GROQ_API_KEY" ]; then
-		echo "export GROQ_API_KEY='$GROQ_API_KEY'" >> ~/.zshrc
-	else
-		echo "GROQ_API_KEY input was empty. It won't be saved."
-	fi
+	llm install llm-groq
+	llm keys set groq
 
 yes | cp -rf $HOME/dotfiles/gitconfig/. ~/
 
