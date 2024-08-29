@@ -98,9 +98,15 @@ function gcm() {
             a|A )
                 if git commit -m "$commit_message"; then
                     echo "Changes committed successfully!"
-                    return 0
                 else
                     echo "Commit failed. Please check your changes and try again."
+                    return 1
+                fi
+                if git push; then
+                    echo "Pushed changes successfully!"
+                    return 0
+                else
+                    echo "Push failed. Please check your changes and try again."
                     return 1
                 fi
                 ;;
@@ -109,9 +115,15 @@ function gcm() {
                 commit_message=$REPLY
                 if [ -n "$commit_message" ] && git commit -m "$commit_message"; then
                     echo "Changes committed successfully with your message!"
-                    return 0
                 else
                     echo "Commit failed. Please check your message and try again."
+                    return 1
+                fi
+                if git push; then
+                    echo "Pushed changes successfully!"
+                    return 0
+                else
+                    echo "Push failed. Please check your changes and try again."
                     return 1
                 fi
                 ;;
