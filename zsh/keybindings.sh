@@ -50,12 +50,6 @@ function extract() {
 }
 
 function gcm() {
-    # Check if GROQ_API_KEY is set
-    if [ -z "$GROQ_API_KEY" ]; then
-        echo "Error: GROQ_API_KEY is not set. Please set it before running this command."
-        return 1
-    fi
-
     git_diff_avail=$(git diff --cached)
     if [ -z "$git_diff_avail" ]; then
         echo "No staged changes found. Please stage your changes before generating a commit message."
