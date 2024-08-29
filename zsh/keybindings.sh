@@ -64,19 +64,18 @@ function gcm() {
 
     # Function to generate commit message
     generate_commit_message() {
-        # Capture staged changes and escape special characters
-        staged_changes=$(git diff --cached | sed 's/[\x00-\x1F\x7F]/\\u&/g' | jq -Rsa '.')
+        staged_changes=$(git diff --cached | perl -pe 's/([^a-zA-Z0-9_\-.,: ])/sprintf("\\u%04x", ord($1))/ge')
 
         # Construct the JSON payload
         json_payload=$(jq -n \
-            --arg changes "$staged_changes" \
-            '{
-                model: "gemma2-9b-it",
-                messages: [
-                    {role: "system", content: "You are a helpful assistant. You will only generate one-line commit message, nothing more."},
-                    {role: "user", content: "Below is a diff of all staged changes, coming from the command:\n\($changes)\nPlease generate a concise, one-line commit message for these changes."}
-                ]
-            }')
+        --arg changes "$staged_changes" \
+        '{
+            model: "gemma2-9b-it",
+            messages: [
+                {role: "system", content: "You are a helpful assistant. You will only generate one-line commit message, nothing more."},
+                {role: "user", content: "Below is a diff of all staged changes, coming from the command:\n\($changes)\nPlease generate a concise, one-line commit message for these changes."}
+            ]
+        }')
 
         response=$(curl -s -X POST "https://api.groq.com/openai/v1/chat/completions" \
         -H "Authorization: Bearer $GROQ_API_KEY" \
