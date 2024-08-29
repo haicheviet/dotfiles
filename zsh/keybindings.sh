@@ -56,15 +56,15 @@ function gcm() {
         return 1
     fi
 
-    staged_changes=$(git diff --cached)
-    if [ -z "$staged_changes" ]; then
+    git_diff_avail=$(git diff --cached)
+    if [ -z "$git_diff_avail" ]; then
         echo "No staged changes found. Please stage your changes before generating a commit message."
         return 1
     fi
 
     # Function to generate commit message
     generate_commit_message() {
-        staged_changes=$(git diff --cached | perl -pe 's/([^a-zA-Z0-9_\-.,: ])/sprintf("\\u%04x", ord($1))/ge')
+        staged_changes=$(git diff --cached | perl -pe 's/([^\w\s,.:-])/sprintf("\\u%04x", ord($1))/ge' | sed 's/$/\\n/' | tr -d '\n')
 
         # Construct the JSON payload
         json_payload=$(jq -n \
@@ -76,7 +76,6 @@ function gcm() {
                 {role: "user", content: "Below is a diff of all staged changes, coming from the command:\n\($changes)\nPlease generate a concise, one-line commit message for these changes."}
             ]
         }')
-
         response=$(curl -s -X POST "https://api.groq.com/openai/v1/chat/completions" \
         -H "Authorization: Bearer $GROQ_API_KEY" \
         -H "Content-Type: application/json" \
