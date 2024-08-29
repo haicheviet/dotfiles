@@ -56,9 +56,15 @@ function gcm() {
         return 1
     fi
 
+    staged_changes=$(git diff --cached | jq -Rsa '.')
+    if [ -z "$staged_changes" ]; then
+        echo "No staged changes found. Please stage your changes before generating a commit message."
+        return 1
+    fi
+
     # Function to generate commit message
     generate_commit_message() {
-    staged_changes=$(git diff --cached | sed ':a;N;$!ba;s/\n/\\n/g' | sed 's/"/\\"/g')
+    staged_changes=$(git diff --cached | jq -Rsa '.')
     response=$(curl -s -X POST "https://api.groq.com/openai/v1/chat/completions" \
      -H "Authorization: Bearer $GROQ_API_KEY" \
      -H "Content-Type: application/json" \
@@ -66,7 +72,7 @@ function gcm() {
             model: "gemma2-9b-it",
             messages: [
                 {role: "system", content: "You are a helpful assistant. You will only generate one-line commit message, nothing more."},
-                {role: "user", content: "Below is a diff of all staged changes, coming from the command:\n\($changes)\nPlease generate a concise, one-line commit message for these changes."}
+                {role: "user", content: "Below is a diff of all staged changes, coming from the command:```\n\($changes)\n```\nPlease generate a concise, one-line commit message for these changes."}
             ]
         }')")
     commit_message=$(echo "$response" | jq -r '.choices[0].message.content' | sed 's/"//g' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
