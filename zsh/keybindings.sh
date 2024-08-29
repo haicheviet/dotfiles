@@ -71,7 +71,6 @@ function gcm() {
         git diff --cached
         \`\`\`
         Please generate a concise, one-line commit message for these changes."
-        
     }
 
     # Function to read user input compatibly with both Bash and Zsh
