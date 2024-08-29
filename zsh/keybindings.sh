@@ -56,7 +56,7 @@ function gcm() {
         return 1
     fi
 
-    staged_changes=$(git diff --cached | jq -Rsa '.')
+    staged_changes=$(git diff --cached)
     if [ -z "$staged_changes" ]; then
         echo "No staged changes found. Please stage your changes before generating a commit message."
         return 1
@@ -64,19 +64,26 @@ function gcm() {
 
     # Function to generate commit message
     generate_commit_message() {
-    staged_changes=$(git diff --cached | jq -Rsa '.')
-    response=$(curl -s -X POST "https://api.groq.com/openai/v1/chat/completions" \
-     -H "Authorization: Bearer $GROQ_API_KEY" \
-     -H "Content-Type: application/json" \
-        -d "$(jq -n --arg changes "$staged_changes" '{
-            model: "gemma2-9b-it",
-            messages: [
-                {role: "system", content: "You are a helpful assistant. You will only generate one-line commit message, nothing more."},
-                {role: "user", content: "Below is a diff of all staged changes, coming from the command:```\n\($changes)\n```\nPlease generate a concise, one-line commit message for these changes."}
-            ]
-        }')")
-    commit_message=$(echo "$response" | jq -r '.choices[0].message.content' | sed 's/"//g' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
-    echo "$commit_message"
+        # Capture staged changes and escape special characters
+        staged_changes=$(git diff --cached | jq -Rs .)
+
+        # Construct the JSON payload
+        json_payload=$(jq -n \
+            --arg changes "$staged_changes" \
+            '{
+                model: "gemma2-9b-it",
+                messages: [
+                    {role: "system", content: "You are a helpful assistant. You will only generate one-line commit message, nothing more."},
+                    {role: "user", content: "Below is a diff of all staged changes, coming from the command:\n\($changes)\nPlease generate a concise, one-line commit message for these changes."}
+                ]
+            }')
+
+        response=$(curl -s -X POST "https://api.groq.com/openai/v1/chat/completions" \
+        -H "Authorization: Bearer $GROQ_API_KEY" \
+        -H "Content-Type: application/json" \
+        -d "$json_payload")
+        commit_message=$(echo "$response" | jq -r '.choices[0].message.content' | sed 's/"//g' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+        echo "$commit_message"
     }
 
     # Function to read user input compatibly with both Bash and Zsh
