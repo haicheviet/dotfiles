@@ -4,10 +4,8 @@ Simple, but extensive customization of ZSH, TMUX, and NeoVim.
 
 ## Installation
 
-Once the repo is cloned, execute the deploy script:
-
 ```shell
-./deploy.sh
+curl -fsSL https://raw.githubusercontent.com/haicheviet/dotfiles/master/install.sh | bash
 ```
 
 This script guides you through the following:
