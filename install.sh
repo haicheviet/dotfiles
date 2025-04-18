@@ -98,6 +98,9 @@ setup_dotfiles() {
         log_info "Cloning dotfiles repository..."
         git clone --recursive https://github.com/haicheviet/dotfiles.git "$dotfiles_dir"
     fi
+
+    # Clone submodule
+    git submodule update --init --recursive
     
     # Backup existing configs
     if get_confirmation "Would you like to backup your current dotfiles?"; then
