@@ -125,7 +125,7 @@ setup_dotfiles() {
     # Neovim configuration
     if get_confirmation "Would you like to use Neovim config?"; then
         rm -rf ~/.config/nvim
-        ln -sf "$dotfiles_dir/nvim" ~/.config/
+        cp -r "$dotfiles_dir/nvim" ~/.config/
         log_success "Neovim config linked!"
     fi
 }
