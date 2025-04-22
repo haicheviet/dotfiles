@@ -125,7 +125,7 @@ setup_dotfiles() {
     # Neovim configuration
     if get_confirmation "Would you like to use Neovim config?"; then
         rm -rf ~/.config/nvim
-        cp -r "$dotfiles_dir/nvim" ~/.config/
+        git clone https://github.com/LazyVim/starter ~/.config/nvim
         log_success "Neovim config linked!"
     fi
 }
