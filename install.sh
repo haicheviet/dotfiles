@@ -63,9 +63,9 @@ install_neovim() {
     if [[ "$OSTYPE" == "darwin"* ]]; then
         brew install neovim
     else
-        wget --quiet https://github.com/neovim/neovim/releases/download/v0.11.0/nvim-linux-x86_64.appimage --output-document nvim
-        chmod u+x nvim
-        sudo mv nvim /usr/bin
+        wget --quiet https://github.com/neovim/neovim/releases/download/v0.11.0/nvim-linux-x86_64.appimage
+        chmod u+x nvim-linux-x86_64.appimage
+        sudo mv nvim-linux-x86_64.appimage /usr/bin/nvim
     fi
     log_success "Neovim installed successfully!"
 }
@@ -123,9 +123,9 @@ setup_dotfiles() {
     fi
     
     # Neovim configuration
-    if get_confirmation "Would you like to use Neovim?"; then
+    if get_confirmation "Would you like to use Neovim config?"; then
         mkdir -p ~/.config/nvim
-        ln -sf "$dotfiles_dir/nvim" ~/.config/nvim
+        ln -sf "$dotfiles_dir/nvim" ~/.config/
         log_success "Neovim config linked!"
     fi
 }
