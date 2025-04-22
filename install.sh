@@ -63,7 +63,7 @@ install_neovim() {
     if [[ "$OSTYPE" == "darwin"* ]]; then
         brew install neovim
     else
-        wget --quiet https://github.com/neovim/neovim/releases/download/stable/nvim.appimage --output-document nvim
+        wget --quiet https://github.com/neovim/neovim/releases/download/v0.11.0/nvim-linux-x86_64.appimage --output-document nvim
         chmod u+x nvim
         sudo mv nvim /usr/bin
     fi
