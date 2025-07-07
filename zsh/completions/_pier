@@ -1,0 +1,63 @@
+#compdef pier
+
+_pier() {
+  local -a subcommands
+  subcommands=(
+    'add:Add a new script'
+    'edit:Edit a script by alias'
+    'list:List all scripts (alias: ls)'
+    'remove:Remove a script by alias (alias: rm)'
+    'run:Run a script by alias'
+    'show:Show a script by alias'
+    'help:Display help for pier'
+  )
+
+  local context state line
+  _arguments -C \
+    '(-h --help)'{-h,--help}'[Show help]' \
+    '(-V --version)'{-V,--version}'[Show version]' \
+    '(-v --verbose)'{-v,--verbose}'[Increase verbosity]' \
+    '(-c --config-file)'{-c=,--config-file=}'[Specify custom config file path]:config file:_files' \
+    '*:: :->args'
+
+  case $state in
+    args)
+      if (( CURRENT == 1 )); then
+        _describe -t commands 'pier subcommand' subcommands
+        return
+      fi
+
+      local subcmd=$words[1]
+
+      case $subcmd in
+        run|edit|remove|rm|show)
+          _pier_aliases
+          ;;
+        *)
+          _message 'No more arguments'
+          ;;
+      esac
+      ;;
+  esac
+}
+
+_pier_aliases() {
+  local config_file
+
+  if [[ -n "$PIER_CONFIG_PATH" && -f "$PIER_CONFIG_PATH" ]]; then
+    config_file="$PIER_CONFIG_PATH"
+  elif [[ -f pier.toml ]]; then
+    config_file="pier.toml"
+  elif [[ -f "$XDG_CONFIG_HOME/pier/config.toml" ]]; then
+    config_file="$XDG_CONFIG_HOME/pier/config.toml"
+  elif [[ -f "$HOME/.pier.toml" ]]; then
+    config_file="$HOME/.pier.toml"
+  else
+    return
+  fi
+
+  local -a aliases
+  aliases=(${(f)"$(grep '^\[scripts\.' "$config_file" | sed -E 's/^\[scripts\.([^]]+)\].*/\1/')"})
+  _describe 'script aliases' aliases
+}
+

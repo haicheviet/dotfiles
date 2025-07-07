@@ -8,7 +8,10 @@ source ~/dotfiles/zsh/plugins/fixls.zsh
 
 chpwd() ls
 
-# a411ef3
+# Add custom completions dir to fpath
+fpath=(~/dotfiles/zsh/completions $fpath)
+
+
 
 autoload -U compinit && compinit
 
@@ -20,6 +23,7 @@ source ~/dotfiles/zsh/prompt.sh
 source ~/dotfiles/zsh/keybindings.sh
 source ~/dotfiles/zsh/bindings.zsh
 source ~/dotfiles/zsh/history.zsh
+
 
 
 # Add dir colors for terminal currently doesn't suppor well for mac

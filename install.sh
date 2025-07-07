@@ -70,6 +70,18 @@ install_neovim() {
     log_success "Neovim installed successfully!"
 }
 
+# Install Pier
+install_pier() {
+    log_info "Installing Pier..."
+    # Check if cargo is installed
+    if ! command -v cargo >/dev/null; then
+        log_info "Installing Rust..."
+        curl https://sh.rustup.rs -sSf | sh
+    fi
+    cargo install pier
+    log_success "Pier installed successfully!"
+}
+
 # Check and install required software
 check_dependencies() {
     local dependencies=("$@")
@@ -115,12 +127,6 @@ setup_dotfiles() {
     log_info "Creating symlinks..."
     printf "source '$HOME/dotfiles/zsh/zshrc_manager.sh'" > ~/.zshrc
     printf "source-file $HOME/dotfiles/tmux/tmux.conf" > ~/.tmux.conf
-    
-    # WezTerm configuration
-    if get_confirmation "Would you like to use WezTerm config?"; then
-        ln -sf "$dotfiles_dir/wezterm/.wezterm.lua" "$HOME/.wezterm.lua"
-        log_success "WezTerm config linked!"
-    fi
     
     # Neovim configuration
     if get_confirmation "Would you like to use Neovim config?"; then
@@ -168,6 +174,9 @@ EOF
     
     # Check dependencies
     check_dependencies zsh tmux nvim
+
+    # Install Pier
+    install_pier
     
     # Check default shell
     if [[ "$SHELL" != *"zsh"* ]]; then
