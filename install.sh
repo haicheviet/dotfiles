@@ -9,6 +9,55 @@ RED='\033[0;31m'
 NC='\033[0m' # No Color
 BOLD='\033[1m'
 
+have_cmd() { command -v "$1" >/dev/null 2>&1; }
+
+ensure_local_bin_on_path() {
+    # Add ~/.local/bin to PATH for current shell and future logins
+    mkdir -p "$HOME/.local/bin"
+    case ":$PATH:" in
+        *":$HOME/.local/bin:"*) ;;
+        *) export PATH="$HOME/.local/bin:$PATH"
+           # persist for bash/zsh
+           for f in "$HOME/.bashrc" "$HOME/.zshrc" "$HOME/.profile"; do
+               [ -f "$f" ] && grep -q 'PATH=.*\.local/bin' "$f" || \
+                 printf '\n# ensure local bin on PATH\nexport PATH="$HOME/.local/bin:$PATH"\n' >> "$f"
+           done
+           ;;
+    esac
+}
+
+ensure_bat_available() {
+    if have_cmd bat; then
+        log_success "bat is already available"
+        return 0
+    fi
+
+    if have_cmd batcat; then
+        log_info "Found batcat; creating bat symlink..."
+        ensure_local_bin_on_path
+        ln -sf /usr/bin/batcat "$HOME/.local/bin/bat"
+        log_success "Symlink created: ~/.local/bin/bat -> /usr/bin/batcat"
+        return 0
+    fi
+
+    # Not present; install package (apt will provide batcat)
+    log_info "bat not found; installing package 'bat'..."
+    install_package "bat" || { log_error "Failed to install bat"; return 1; }
+
+    # After install, prefer to expose it as 'bat'
+    if have_cmd bat; then
+        log_success "bat installed as 'bat'"
+    elif have_cmd batcat; then
+        log_info "bat installed as 'batcat'; linking to 'bat'..."
+        ensure_local_bin_on_path
+        ln -sf /usr/bin/batcat "$HOME/.local/bin/bat"
+        log_success "bat is now available as 'bat'"
+    else
+        log_error "Install finished but neither 'bat' nor 'batcat' found"
+        return 1
+    fi
+}
+
 # Progress bar function
 progress_bar() {
     local duration=$1
@@ -177,6 +226,9 @@ EOF
 
     # Install Pier
     install_pier
+
+    # Install batcat
+    ensure_bat_available
     
     # Check default shell
     if [[ "$SHELL" != *"zsh"* ]]; then

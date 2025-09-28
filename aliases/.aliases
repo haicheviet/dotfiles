@@ -92,6 +92,9 @@ alias gcheckout="git checkout"
 alias gstatus="git status"
 alias gpush="git push"
 
+# Better cat
+alias cat="bat"
+
 alias v="vim"
 alias vim="nvim"
 alias lcenv="set -a && source .env && set +a &&"

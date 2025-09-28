@@ -8,6 +8,10 @@ cp_p () {
   rsync -WavP --human-readable --progress $1 $2
 }
 
+batdiff() {
+    git diff --name-only --relative --diff-filter=d -z | xargs -0 bat --diff
+}
+
 # Preview csv files. source: http://stackoverflow.com/questions/1875305/command-line-csv-viewer
 function csvpreview(){
       sed 's/,,/, ,/g;s/,,/, ,/g' "$@" | column -s, -t | less -#2 -N -S
