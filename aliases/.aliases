@@ -95,6 +95,9 @@ alias gpush="git push"
 # Better cat
 alias cat="bat"
 
+# Better grep
+alias grep="rg"
+
 alias v="vim"
 alias vim="nvim"
 alias lcenv="set -a && source .env && set +a &&"

@@ -58,6 +58,22 @@ ensure_bat_available() {
     fi
 }
 
+ensure_ripgrep_available() {
+    if have_cmd rg; then
+        log_success "ripgrep (rg) is already available"
+        return 0
+    fi
+    log_info "ripgrep not found; installing..."
+    install_package "ripgrep" || { log_error "Failed to install ripgrep"; return 1; }
+
+    if have_cmd rg; then
+        log_success "ripgrep installed successfully (rg)"
+    else
+        log_error "ripgrep installation finished but 'rg' command not found."
+        return 1
+    fi
+}
+
 # Progress bar function
 progress_bar() {
     local duration=$1
@@ -229,6 +245,9 @@ EOF
 
     # Install batcat
     ensure_bat_available
+
+    # Install ripgrep (if not present)
+    ensure_ripgrep_available
     
     # Check default shell
     if [[ "$SHELL" != *"zsh"* ]]; then
