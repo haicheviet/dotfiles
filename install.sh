@@ -67,14 +67,12 @@ install_neovim() {
         # Install pure linux binary for latest version if package manager is old
         # But for stability on simple install, use package manager if available, 
         # or appimage if requested. Let's stick to simple package install first for reliability
-        # unless user really wants 0.11 specifically.
-        # The previous script downloaded 0.11 explicitly. I'll preserve that logic but make it safer.
-        curl -L https://github.com/neovim/neovim/releases/download/v0.10.0/nvim-linux64.tar.gz -o nvim-linux64.tar.gz
-        tar xzvf nvim-linux64.tar.gz
-        sudo mv nvim-linux64/bin/nvim /usr/bin/nvim
-        sudo mv nvim-linux64/lib/nvim /usr/lib/nvim
-        sudo mv nvim-linux64/share/nvim /usr/share/nvim
-        rm -rf nvim-linux64 nvim-linux64.tar.gz
+        curl -L https://github.com/neovim/neovim/releases/download/v0.11.5/nvim-linux-x86_64.tar.gz -o nvim-linux-x86_64.tar.gz
+        tar xzvf nvim-linux-x86_64.tar.gz
+        sudo mv nvim-linux-x86_64/bin/nvim /usr/bin/nvim
+        sudo mv nvim-linux-x86_64/lib/nvim /usr/lib/nvim
+        sudo mv nvim-linux-x86_64/share/nvim /usr/share/nvim
+        rm -rf nvim-linux-x86_64 nvim-linux-x86_64.tar.gz
     fi
     log_success "Neovim installed successfully!"
 }
